@@ -9,6 +9,9 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.s14990_smb_proj1.databinding.ActivityMainBinding
 
 private lateinit var sp: SharedPreferences
@@ -20,14 +23,38 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         sp = getPreferences(Context.MODE_PRIVATE)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        
+        setContentView(binding.root)
+
         binding.radioGroup.setOnCheckedChangeListener { group, checkedId ->
             changeColor(checkedId)
         }
 
 
 
-        setContentView(binding.root)
+        val viewModel = ShopItemViewModel(application)
+        val adapter = ItemsAdapter(viewModel)
+        viewModel.items.observe(this, Observer{ items ->
+            items.let {
+                adapter.setItems(it)
+            }
+        })
+        val itemsList=binding.itemsView
+        itemsList.layoutManager = LinearLayoutManager(this)
+        itemsList.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        itemsList.adapter = adapter
+
+
+        binding.addItemButton.setOnClickListener {
+            viewModel.insert( ShopItem(
+                itemName = binding.itemNameField.text.toString(),
+                itemPrice = binding.itemPriceField.text.toString().toFloat(),
+                checked = binding.itemCheckedField.isChecked
+            ))
+        }
+
+
+
+
     }
 
 
@@ -42,7 +69,7 @@ class MainActivity : AppCompatActivity() {
             delegate.applyDayNight()
             Toast.makeText(applicationContext, "Light Theme", Toast.LENGTH_SHORT).show()
         }
-        val editor = sp.edit();
+        val editor = sp.edit()
         editor.putInt("check_id", check_id)
         editor.apply()
     }
@@ -50,14 +77,14 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        binding.radioGroup.check(sp.getInt("check_id", binding.radioLight.id))
+        binding.radioGroup.check(sp.getInt("check_id", 0))
         binding.shopName.setText(sp.getString("shop_name", "Default shop"))
 
     }
 
     override fun onStop() {
         super.onStop()
-        val editor = sp.edit();
+        val editor = sp.edit()
         editor.putString("shop_name", binding.shopName.text.toString())
         editor.apply()
     }

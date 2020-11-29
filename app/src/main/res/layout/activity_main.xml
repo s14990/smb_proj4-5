@@ -7,38 +7,97 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <RadioGroup
-        android:id="@+id/radio_group"
-        android:layout_width="152dp"
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <RadioButton
-            android:id="@+id/radio_dark"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:text="Dark" />
+        <EditText
+            android:id="@+id/shop_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="31dp"
+            android:ems="10"
+            android:hint="Nazwa Sklepu"
+            android:inputType="text" />
 
-        <RadioButton
-            android:id="@+id/radio_light"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:checked="false"
-            android:text="Light" />
-    </RadioGroup>
+        <RadioGroup
+            android:id="@+id/radio_group"
+            android:layout_width="152dp"
+            android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/shop_name"
+            <RadioButton
+                android:id="@+id/radio_dark"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:text="Dark" />
+
+            <RadioButton
+                android:id="@+id/radio_light"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:checked="false"
+                android:text="Light" />
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="18dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="31dp"
-        android:ems="10"
-        android:inputType="text"
-        app:layout_constraintEnd_toStartOf="@+id/radio_group"
+        android:layout_height="200dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+        <EditText
+            android:id="@+id/item_name_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Nazwa"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/item_price_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Cena"
+            android:inputType="numberDecimal" />
+
+        <CheckBox
+            android:id="@+id/item_checked_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="W koszyku" />
+
+        <Button
+            android:id="@+id/add_item_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="Dodaj Item" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/itemsView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
