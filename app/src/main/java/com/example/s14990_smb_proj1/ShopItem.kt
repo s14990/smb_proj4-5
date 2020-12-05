@@ -6,4 +6,4 @@ import androidx.room.PrimaryKey
 
 
 @Entity
-data class ShopItem (@PrimaryKey(autoGenerate = true) var _ID: Long = 0, var itemName: String, var itemPrice: Float, var checked: Boolean) {}
+data class ShopItem (@PrimaryKey(autoGenerate = true) var _ID: Long = 0, var itemName: String, var itemPrice: Float, var itemPCount: Int, var checked: Boolean) {}

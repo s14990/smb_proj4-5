@@ -12,7 +12,6 @@ import androidx.lifecycle.MutableLiveData
 
 @RequiresApi(Build.VERSION_CODES.O)
 class ShopItemViewModel (application: Application) : AndroidViewModel(application) {
-    private val repo: ShopItemRepo
     val items = MutableLiveData<List<ShopItem>>()
     private val cR: ContentResolver
 
@@ -26,7 +25,6 @@ class ShopItemViewModel (application: Application) : AndroidViewModel(applicatio
     init{
         cR = application.contentResolver
         cR.registerContentObserver(ItemsProvider.PROVIDER_URI,true,myObserver(this))
-        repo = ShopItemRepo(ShopItemDB.getDatabase(application.applicationContext).shopItemDao())
         refresh()
     }
 
@@ -55,12 +53,14 @@ class ShopItemViewModel (application: Application) : AndroidViewModel(applicatio
             val indexName = cursor.getColumnIndex(ItemsProvider.ITEM_NAME)
             val indexPrice = cursor.getColumnIndex(ItemsProvider.ITEM_PRICE)
             val indexChecked = cursor.getColumnIndex(ItemsProvider.CHECKED)
+            val indexItemCount = cursor.getColumnIndex(ItemsProvider.ITEM_COUNT)
 
             while (!cursor.isAfterLast) {
                 list.add(ShopItem(
                         _ID = cursor.getLong(indexId),
                         itemName = cursor.getString(indexName),
                         itemPrice = cursor.getFloat(indexPrice),
+                        itemPCount = cursor.getInt(indexItemCount),
                         checked = cursor.getInt(indexChecked) > 0
                 ))
                 cursor.moveToNext()

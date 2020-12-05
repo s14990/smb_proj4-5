@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.*
 import androidx.room.Room.databaseBuilder
 
-@Database(entities = [ShopItem::class], version = 2)
+@Database(entities = [ShopItem::class], version = 3)
 abstract class ShopItemDB : RoomDatabase() {
     abstract fun shopItemDao(): ShopItemDao
 

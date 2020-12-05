@@ -21,6 +21,7 @@ class ItemsProvider () : ContentProvider() {
         const val ITEM_NAME="itemName"
         const val ITEM_PRICE="itemPrice"
         const val CHECKED="checked"
+        const val ITEM_COUNT="itemPCount"
     }
 
     override fun onCreate(): Boolean {
@@ -68,12 +69,14 @@ class ItemsProvider () : ContentProvider() {
                         _ID = contentValues.getAsLong(_ID),
                         itemName = contentValues.getAsString(ITEM_NAME),
                         itemPrice = contentValues.getAsFloat(ITEM_PRICE),
+                        itemPCount = contentValues.getAsInteger(ITEM_COUNT),
                         checked = contentValues.getAsBoolean( CHECKED)
                 )
         }
             return ShopItem(
                     itemName = contentValues.getAsString(ITEM_NAME),
                     itemPrice = contentValues.getAsFloat(ITEM_PRICE),
+                    itemPCount = contentValues.getAsInteger(ITEM_COUNT),
                     checked = contentValues.getAsBoolean( CHECKED)
             )
     }

@@ -2,6 +2,8 @@ package com.example.s14990_smb_proj1
 
 import android.content.ContentValues
 import android.os.Build
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
@@ -27,22 +29,19 @@ class ItemsAdapter(val itemsViewModel: ShopItemViewModel) : RecyclerView.Adapter
         holder.binding.elemName.text = shopItemsList[index].itemName
         holder.binding.elemPrice.text = shopItemsList[index].itemPrice.toString()
         holder.binding.elemChecked.isChecked = shopItemsList[index].checked
-
-        holder.binding.root.setOnClickListener{
+        holder.binding.elemCount.text = shopItemsList[index].itemPCount.toString()
+        holder.binding.elemDelete.setOnClickListener{
             itemsViewModel.delete(shopItemsList[index]._ID)
             notifyDataSetChanged()
         }
+
         holder.binding.elemChecked.setOnClickListener {
             shopItemsList[index].checked = holder.binding.elemChecked.isChecked
-            var item = shopItemsList[index]
+            val item = shopItemsList[index]
 
-            var cv = ContentValues()
-            cv.put(ItemsProvider._ID,item._ID)
-            cv.put(ItemsProvider.ITEM_NAME,item.itemName)
-            cv.put(ItemsProvider.ITEM_PRICE,item.itemPrice)
-            cv.put(ItemsProvider.CHECKED,item.checked)
+            val cv = getCV(item)
             itemsViewModel.update(cv)
-            notifyDataSetChanged()
+
         }
     }
 
@@ -50,7 +49,17 @@ class ItemsAdapter(val itemsViewModel: ShopItemViewModel) : RecyclerView.Adapter
 
 
     fun setItems(itemsList: List<ShopItem>){
-        this.shopItemsList = itemsList
+        shopItemsList = itemsList
         notifyDataSetChanged()
+    }
+
+    fun getCV(item: ShopItem): ContentValues {
+        var cv = ContentValues()
+        cv.put(ItemsProvider._ID,item._ID)
+        cv.put(ItemsProvider.ITEM_NAME,item.itemName)
+        cv.put(ItemsProvider.ITEM_PRICE,item.itemPrice)
+        cv.put(ItemsProvider.ITEM_COUNT,item.itemPCount)
+        cv.put(ItemsProvider.CHECKED,item.checked)
+        return cv
     }
 }
