@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.*
 import androidx.room.Room.databaseBuilder
 
-@Database(entities = [ShopItem::class], version = 1)
+@Database(entities = [ShopItem::class], version = 2)
 abstract class ShopItemDB : RoomDatabase() {
     abstract fun shopItemDao(): ShopItemDao
 
@@ -20,7 +20,8 @@ abstract class ShopItemDB : RoomDatabase() {
                 context,
                 ShopItemDB::class.java,
                 "ShopItemDB"
-            ).allowMainThreadQueries().build()
+            ).allowMainThreadQueries()
+                    .fallbackToDestructiveMigration().build()
 
             return instance as ShopItemDB
         }

@@ -8,25 +8,30 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_weight="1"
+        android:gravity="center"
         android:text="Id" />
-
-    <TextView
-        android:id="@+id/elem_name"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_weight="1"
-        android:text="ItemName" />
-
-    <TextView
-        android:id="@+id/elem_price"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_weight="1"
-        android:text="Price" />
 
     <CheckBox
         android:id="@+id/elem_checked"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/elem_name"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="ItemName" />
+
+    <TextView
+        android:id="@+id/elem_price"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Price" />
+
 </LinearLayout>

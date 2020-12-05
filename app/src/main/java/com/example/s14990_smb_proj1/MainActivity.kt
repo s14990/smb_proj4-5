@@ -1,13 +1,16 @@
 package com.example.s14990_smb_proj1
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -18,6 +21,7 @@ private lateinit var sp: SharedPreferences
 private lateinit var binding: ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -25,11 +29,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.radioGroup.setOnCheckedChangeListener { group, checkedId ->
+        binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
             changeColor(checkedId)
         }
-
-
 
         val viewModel = ShopItemViewModel(application)
         val adapter = ItemsAdapter(viewModel)
@@ -43,17 +45,20 @@ class MainActivity : AppCompatActivity() {
         itemsList.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         itemsList.adapter = adapter
 
-
         binding.addItemButton.setOnClickListener {
-            viewModel.insert( ShopItem(
-                itemName = binding.itemNameField.text.toString(),
-                itemPrice = binding.itemPriceField.text.toString().toFloat(),
-                checked = binding.itemCheckedField.isChecked
-            ))
+            val name=binding.itemNameField.text.toString()
+            val priceString=binding.itemPriceField.text.toString()
+            if (name.isEmpty() || priceString.isEmpty()){
+                Toast.makeText(this, "Nazwa i cena nie mogą być puste",Toast.LENGTH_SHORT).show()
+            }
+            else {
+                val cv = ContentValues()
+                cv.put(ItemsProvider.ITEM_NAME, name)
+                cv.put(ItemsProvider.ITEM_PRICE,  priceString.toFloat())
+                cv.put(ItemsProvider.CHECKED, binding.itemCheckedField.isChecked)
+                viewModel.insert(cv)
+            }
         }
-
-
-
 
     }
 

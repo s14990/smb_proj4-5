@@ -1,7 +1,10 @@
 package com.example.s14990_smb_proj1
 
+import android.content.ContentValues
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.s14990_smb_proj1.databinding.ListElementBinding
 
@@ -17,20 +20,28 @@ class ItemsAdapter(val itemsViewModel: ShopItemViewModel) : RecyclerView.Adapter
         return MyViewHolder(binding)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: MyViewHolder, index: Int) {
 
-        holder.binding.elemId.text = shopItemsList[index].id.toString()
+        holder.binding.elemId.text = shopItemsList[index]._ID.toString()
         holder.binding.elemName.text = shopItemsList[index].itemName
         holder.binding.elemPrice.text = shopItemsList[index].itemPrice.toString()
         holder.binding.elemChecked.isChecked = shopItemsList[index].checked
 
         holder.binding.root.setOnClickListener{
-            itemsViewModel.delete(shopItemsList[index])
+            itemsViewModel.delete(shopItemsList[index]._ID)
             notifyDataSetChanged()
         }
         holder.binding.elemChecked.setOnClickListener {
             shopItemsList[index].checked = holder.binding.elemChecked.isChecked
-            itemsViewModel.update(shopItemsList[index])
+            var item = shopItemsList[index]
+
+            var cv = ContentValues()
+            cv.put(ItemsProvider._ID,item._ID)
+            cv.put(ItemsProvider.ITEM_NAME,item.itemName)
+            cv.put(ItemsProvider.ITEM_PRICE,item.itemPrice)
+            cv.put(ItemsProvider.CHECKED,item.checked)
+            itemsViewModel.update(cv)
             notifyDataSetChanged()
         }
     }
