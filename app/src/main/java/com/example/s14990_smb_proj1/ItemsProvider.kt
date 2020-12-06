@@ -14,9 +14,7 @@ class ItemsProvider () : ContentProvider() {
     companion object{
         const val PROVIDER_NAME ="com.example.s14990_smb_proj1/ItemsProvider"
         private const val URL = "content://$PROVIDER_NAME/SHOPITEM"
-
         val PROVIDER_URI: Uri = Uri.parse(URL)
-
         const val _ID="_ID"
         const val ITEM_NAME="itemName"
         const val ITEM_PRICE="itemPrice"

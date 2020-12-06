@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         binding.defaultCount.filters= arrayOf<InputFilter> (object: InputFilter{
             override fun filter(source: CharSequence, start: Int, end: Int, dest: Spanned?, dstart: Int, dend: Int): CharSequence? {
                 val new_value=dest.toString().substring(0, dstart)+source.subSequence(start, end).toString()
-                if(new_value.toString().isEmpty())
+                if(new_value.isEmpty())
                     return "1"
                 else return null
             }
