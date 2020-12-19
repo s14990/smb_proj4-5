@@ -1,8 +1,7 @@
 package com.example.s14990_smb_proj1
 
-import android.content.ContentValues
-import android.content.Context
-import android.content.SharedPreferences
+import android.content.*
+import android.Manifest
 import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -85,10 +84,18 @@ class MainActivity : AppCompatActivity() {
                 cv.put(ItemsProvider.ITEM_PRICE,  priceString.toFloat())
                 cv.put(ItemsProvider.CHECKED, binding.itemCheckedField.isChecked)
                 cv.put(ItemsProvider.ITEM_COUNT,  countString.toInt())
-                viewModel.insert(cv)
-                binding.itemNameField.setText("")
-                binding.itemPriceField.setText("")
-                binding.itemCountField.setText(binding.defaultCount.text.toString())
+                val newItemId=viewModel.insert(cv)
+                if(newItemId>0){
+                    val broadcast = Intent("com.example.s14990_smb_proj1.ADD_ITEM")
+                    broadcast.putExtra("_ID",newItemId)
+                    broadcast.putExtra("Name", name)
+                    broadcast.component = ComponentName("com.example.s14990_smb_proj2", "com.example.s14990_smb_proj2.ItemReceiver")
+                    sendBroadcast(broadcast,"com.example.s14990.ITEM_PERMISSION")
+                    binding.itemNameField.setText("")
+                    binding.itemPriceField.setText("")
+                    binding.itemCountField.setText(binding.defaultCount.text.toString())
+                }
+
             }
         }
 

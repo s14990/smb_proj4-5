@@ -2,8 +2,10 @@ package com.example.s14990_smb_proj1
 
 import android.app.Application
 import android.content.ContentResolver
+import android.content.ContentUris
 import android.content.ContentValues
 import android.database.ContentObserver
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -28,8 +30,12 @@ class ShopItemViewModel (application: Application) : AndroidViewModel(applicatio
         refresh()
     }
 
-    fun insert(cv: ContentValues) {
-        cR.insert(ItemsProvider.PROVIDER_URI,cv)
+    fun insert(cv: ContentValues) : Long {
+        val uri_id=cR.insert(ItemsProvider.PROVIDER_URI,cv)
+        if(uri_id != null){
+            return ContentUris.parseId(uri_id)
+        }
+        return 0
     }
 
     fun update(cv : ContentValues){
@@ -40,7 +46,6 @@ class ShopItemViewModel (application: Application) : AndroidViewModel(applicatio
         val id_URL: String = "content://${ItemsProvider.PROVIDER_NAME}/SHOPITEM/$id"
         cR.delete(Uri.parse(id_URL),null,null)
     }
-
 
 
     private fun refresh(){
@@ -70,4 +75,5 @@ class ShopItemViewModel (application: Application) : AndroidViewModel(applicatio
         }
 
     }
+
 }

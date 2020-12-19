@@ -12,13 +12,14 @@ interface ShopItemDao {
     fun getShopItems() : LiveData<List<ShopItem>>
 
     @Insert
-    fun insert(student: ShopItem)
+    fun insert(shopitem: ShopItem) : Long
 
     @Update
-    fun update(student: ShopItem)
+    fun update(shopitem: ShopItem)
 
     @Delete
-    fun delete(student: ShopItem)
+    fun delete(shopitem: ShopItem)
+
 
     @Query("Delete FROM ShopItem")
     fun deleteAll()
@@ -28,5 +29,8 @@ interface ShopItemDao {
 
     @Query("DELETE FROM ShopItem WHERE _ID = :id ")
     fun delete_by_id(id: Long): Int
+
+    @Query("Select * from ShopItem WHERE _ID = :id")
+    fun get_by_id(id: Long): Cursor
 
 }

@@ -3,6 +3,7 @@ package com.example.s14990_smb_proj1
 import android.content.ContentProvider
 import android.content.ContentUris
 import android.content.ContentValues
+import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
 import androidx.lifecycle.LiveData
@@ -27,10 +28,12 @@ class ItemsProvider () : ContentProvider() {
         return true
     }
 
-    override fun insert(uri: Uri, values: ContentValues?): Uri? {
+    override fun insert(uri: Uri, values: ContentValues?): Uri {
         if (values != null){
-            val id= dao.insert(fromContentValues(values))
+            val _ID= dao.insert(fromContentValues(values))
+            val id_URL: String = "content://${PROVIDER_NAME}/SHOPITEM/$_ID"
             context!!.contentResolver.notifyChange(uri, null)
+            return Uri.parse(id_URL)
         }
         return uri
     }
@@ -48,6 +51,10 @@ class ItemsProvider () : ContentProvider() {
             return 1
         }
         return 0
+    }
+
+    fun getById(id: Long): Cursor {
+        return dao.get_by_id(id)
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
@@ -78,5 +85,6 @@ class ItemsProvider () : ContentProvider() {
                     checked = contentValues.getAsBoolean( CHECKED)
             )
     }
+
 
 }
