@@ -28,8 +28,8 @@ class ItemsAdapter(val itemsViewModel: ShopItemViewModel) : RecyclerView.Adapter
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: MyViewHolder, index: Int) {
 
-        holder.binding.elemId.text = shopItemsList[index]._ID.toString()
-        holder.binding.elemName.setText(shopItemsList[index].itemName.toString())
+        holder.binding.elemId.text = shopItemsList[index]._ID
+        holder.binding.elemName.setText(shopItemsList[index].itemName)
         holder.binding.elemPrice.setText(shopItemsList[index].itemPrice.toString())
         holder.binding.elemCount.setText(shopItemsList[index].itemPCount.toString())
         holder.binding.elemChecked.isChecked = shopItemsList[index].checked
@@ -59,10 +59,9 @@ class ItemsAdapter(val itemsViewModel: ShopItemViewModel) : RecyclerView.Adapter
                 shopItemsList[index].itemPrice = priceS.toFloat()
                 shopItemsList[index].itemPCount = countS.toInt()
                 val item = shopItemsList[index]
-                val cv = getCV(item)
-                itemsViewModel.update(cv)
+                itemsViewModel.update(shopItemsList[index])
                 holder.binding.elemUpdate.visibility= INVISIBLE
-                notifyDataSetChanged()
+                //notifyDataSetChanged()
             }
         }
 
@@ -106,13 +105,4 @@ class ItemsAdapter(val itemsViewModel: ShopItemViewModel) : RecyclerView.Adapter
         notifyDataSetChanged()
     }
 
-    fun getCV(item: ShopItem): ContentValues {
-        var cv = ContentValues()
-        cv.put(ItemsProvider._ID,item._ID)
-        cv.put(ItemsProvider.ITEM_NAME,item.itemName)
-        cv.put(ItemsProvider.ITEM_PRICE,item.itemPrice)
-        cv.put(ItemsProvider.ITEM_COUNT,item.itemPCount)
-        cv.put(ItemsProvider.CHECKED,item.checked)
-        return cv
-    }
 }

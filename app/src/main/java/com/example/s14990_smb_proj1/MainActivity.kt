@@ -1,8 +1,6 @@
 package com.example.s14990_smb_proj1
 
 import android.content.*
-import android.Manifest
-import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,8 +8,6 @@ import android.text.Editable
 import android.text.InputFilter
 import android.text.Spanned
 import android.text.TextWatcher
-import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
@@ -22,6 +18,8 @@ import com.example.s14990_smb_proj1.databinding.ActivityMainBinding
 
 private lateinit var sp: SharedPreferences
 private lateinit var binding: ActivityMainBinding
+private lateinit var UID: String
+private lateinit var UserName: String
 
 class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -33,6 +31,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        UID = intent.getStringExtra("UID").toString()
+        UserName = intent.getStringExtra("UserName").toString()
 
         binding.defaultCount.filters= arrayOf<InputFilter> (object: InputFilter{
             override fun filter(source: CharSequence, start: Int, end: Int, dest: Spanned?, dstart: Int, dend: Int): CharSequence? {
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             changeColor(checkedId)
         }
 
-        val viewModel = ShopItemViewModel(application)
+        val viewModel = ShopItemViewModel(application, UID)
         val adapter = ItemsAdapter(viewModel)
         viewModel.items.observe(this, Observer{ items ->
             items.let {
@@ -79,24 +79,15 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Nazwa,cena i ilość nie mogą być puste",Toast.LENGTH_SHORT).show()
             }
             else {
-                val cv = ContentValues()
-                cv.put(ItemsProvider.ITEM_NAME, name)
-                cv.put(ItemsProvider.ITEM_PRICE,  priceString.toFloat())
-                cv.put(ItemsProvider.CHECKED, binding.itemCheckedField.isChecked)
-                cv.put(ItemsProvider.ITEM_COUNT,  countString.toInt())
-                val newItemId=viewModel.insert(cv)
-                if(newItemId>0){
-                    val broadcast = Intent("com.example.s14990_smb_proj1.ADD_ITEM")
-                    broadcast.putExtra("_ID",newItemId)
-                    broadcast.putExtra("Name", name)
-                    broadcast.component = ComponentName("com.example.s14990_smb_proj2", "com.example.s14990_smb_proj2.ItemReceiver")
-                    sendBroadcast(broadcast,"com.example.s14990.ITEM_PERMISSION")
-                    binding.itemNameField.setText("")
-                    binding.itemPriceField.setText("")
-                    binding.itemCountField.setText(binding.defaultCount.text.toString())
-                }
-
+                viewModel.insert(name,priceString.toFloat(),countString.toInt(),binding.itemCheckedField.isChecked)
+                binding.itemNameField.setText("")
+                binding.itemPriceField.setText("")
+                binding.itemCountField.setText(binding.defaultCount.text.toString())
             }
+        }
+        binding.SwitchButton.setOnClickListener {
+            val Main2Intent = Intent(this,MainActivity2::class.java)
+            startActivity(Main2Intent)
         }
 
     }
