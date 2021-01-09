@@ -1,6 +1,7 @@
 package com.example.s14990_smb_proj1
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -16,12 +17,16 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.s14990_smb_proj1.databinding.ActivityMain2Binding
 import androidx.lifecycle.Observer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
 
 private lateinit var sp: SharedPreferences
 private lateinit var binding: ActivityMain2Binding
 private lateinit var UID: String
-private lateinit var UserName: String
+private lateinit var UserUID: String
 
 class MainActivity2 : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -34,7 +39,7 @@ class MainActivity2 : AppCompatActivity() {
         setContentView(binding.root)
 
         UID = "Common"
-        UserName = "Guest"
+        UserUID = intent.getStringExtra("UID").toString()
 
         binding.defaultCount.filters= arrayOf<InputFilter> (object: InputFilter {
             override fun filter(source: CharSequence, start: Int, end: Int, dest: Spanned?, dstart: Int, dend: Int): CharSequence? {
@@ -77,7 +82,9 @@ class MainActivity2 : AppCompatActivity() {
                 Toast.makeText(this, "Nazwa,cena i ilość nie mogą być puste", Toast.LENGTH_SHORT).show()
             }
             else {
-                viewModel.insert(name,priceString.toFloat(),countString.toInt(),binding.itemCheckedField.isChecked)
+                CoroutineScope(IO).launch {
+                    viewModel.insert(name, priceString.toFloat(), countString.toInt(), binding.itemCheckedField.isChecked)
+                }
                 binding.itemNameField.setText("")
                 binding.itemPriceField.setText("")
                 binding.itemCountField.setText(binding.defaultCount.text.toString())
@@ -85,6 +92,10 @@ class MainActivity2 : AppCompatActivity() {
         }
 
         binding.SwitchButton.setOnClickListener {
+            val MainIntent = Intent(this, MainActivity::class.java)
+            MainIntent.putExtra("UID", UserUID)
+            MainIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(MainIntent)
             finish()
         }
 

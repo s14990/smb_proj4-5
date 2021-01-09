@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.*
+import kotlinx.coroutines.runBlocking
 
 private lateinit var FD: FirebaseDatabase
 private lateinit var ItemRef: DatabaseReference
@@ -28,6 +29,17 @@ class ShopItemViewModel(application: Application, var User_ID: String) : Android
     init{
         FD=FirebaseDatabase.getInstance()
         ItemRef=FD.getReference("users/$User_ID")
+        ItemRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (!snapshot.exists()) {
+                    val users=FD.getReference("users")
+                    users.child("$User_ID/1").setValue(ShopItem())
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+
         refresh()
     }
 
@@ -47,10 +59,7 @@ class ShopItemViewModel(application: Application, var User_ID: String) : Android
     }
 
     fun delete(id: String) {
-
         ItemRef.child(id).removeValue()
-        //val id_URL: String = "content://${ItemsProvider.PROVIDER_NAME}/SHOPITEM/$id"
-        //cR.delete(Uri.parse(id_URL),null,null)
     }
 
 
@@ -95,43 +104,42 @@ class ShopItemViewModel(application: Application, var User_ID: String) : Android
 
         ItemRef.addChildEventListener(object : ChildEventListener{
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-
-                if(snapshot.key!="1"){
-                    val list= mutableListOf<ShopItem>()
-                    val item=snapshot.getValue(ShopItem::class.java)
-                    list.addAll(items.value!!)
-                    list.add(item!!)
-                    items.value=list
+                runBlocking {
+                    if (snapshot.key != "1") {
+                        val list = mutableListOf<ShopItem>()
+                        val item = snapshot.getValue(ShopItem::class.java)
+                        list.addAll(items.value!!)
+                        list.add(item!!)
+                        items.value = list
+                    }
                 }
-
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-
-                val list= mutableListOf<ShopItem>()
-                val item=snapshot.getValue(ShopItem::class.java)!!
-                list.addAll(items.value!!)
-                val old_item = list.first { it._ID== item._ID  }
-                list.remove(old_item)
-                list.add(item)
-                items.value=list
+                runBlocking {
+                    val list = mutableListOf<ShopItem>()
+                    val item = snapshot.getValue(ShopItem::class.java)!!
+                    list.addAll(items.value!!)
+                    val old_item = list.first { it._ID == item._ID }
+                    list.remove(old_item)
+                    list.add(item)
+                    items.value = list
+                }
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                val list= mutableListOf<ShopItem>()
-                val item=snapshot.getValue(ShopItem::class.java)
-                list.addAll(items.value!!)
-                list.remove(item)
-                items.value=list
+                runBlocking {
+                    val list = mutableListOf<ShopItem>()
+                    val item = snapshot.getValue(ShopItem::class.java)
+                    list.addAll(items.value!!)
+                    list.remove(item)
+                    items.value = list
+                }
             }
 
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
 
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-
-            }
+            override fun onCancelled(error: DatabaseError) {}
         })
         }
 

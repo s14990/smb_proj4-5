@@ -12,6 +12,11 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.s14990_smb_proj1.databinding.ListElementBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ItemsAdapter(val itemsViewModel: ShopItemViewModel) : RecyclerView.Adapter<ItemsAdapter.MyViewHolder>() {
 
@@ -37,8 +42,12 @@ class ItemsAdapter(val itemsViewModel: ShopItemViewModel) : RecyclerView.Adapter
 
 
         holder.binding.root.setOnClickListener{
-            itemsViewModel.delete(shopItemsList[index]._ID)
-            notifyDataSetChanged()
+            CoroutineScope(IO).launch {
+                itemsViewModel.delete(shopItemsList[index]._ID)
+                withContext(Main) {
+                    notifyDataSetChanged()
+                }
+            }
         }
 
         holder.binding.elemChecked.setOnClickListener {
@@ -46,22 +55,25 @@ class ItemsAdapter(val itemsViewModel: ShopItemViewModel) : RecyclerView.Adapter
         }
 
         holder.binding.elemUpdate.setOnClickListener {
-            val nameS = holder.binding.elemName.text.toString()
-            val priceS = holder.binding.elemPrice.text.toString()
-            val countS = holder.binding.elemCount.text.toString()
+            CoroutineScope(IO).launch {
+                val nameS = holder.binding.elemName.text.toString()
+                val priceS = holder.binding.elemPrice.text.toString()
+                val countS = holder.binding.elemCount.text.toString()
 
-            if(nameS.isEmpty() || priceS.isEmpty() || countS.isEmpty()) {
-                Toast.makeText(holder.binding.root.context, "Nazwa,cena i ilość nie mogą być puste",Toast.LENGTH_SHORT).show()
-            }
-            else{
-                shopItemsList[index].checked = holder.binding.elemChecked.isChecked
-                shopItemsList[index].itemName = nameS
-                shopItemsList[index].itemPrice = priceS.toFloat()
-                shopItemsList[index].itemPCount = countS.toInt()
-                val item = shopItemsList[index]
-                itemsViewModel.update(shopItemsList[index])
-                holder.binding.elemUpdate.visibility= INVISIBLE
-                //notifyDataSetChanged()
+                if (nameS.isEmpty() || priceS.isEmpty() || countS.isEmpty()) {
+                    Toast.makeText(holder.binding.root.context, "Nazwa,cena i ilość nie mogą być puste", Toast.LENGTH_SHORT).show()
+                } else {
+                    shopItemsList[index].checked = holder.binding.elemChecked.isChecked
+                    shopItemsList[index].itemName = nameS
+                    shopItemsList[index].itemPrice = priceS.toFloat()
+                    shopItemsList[index].itemPCount = countS.toInt()
+                    val item = shopItemsList[index]
+                    itemsViewModel.update(shopItemsList[index])
+                    withContext(Main) {
+                        notifyDataSetChanged()
+                        holder.binding.elemUpdate.visibility = INVISIBLE
+                    }
+                }
             }
         }
 
@@ -101,8 +113,12 @@ class ItemsAdapter(val itemsViewModel: ShopItemViewModel) : RecyclerView.Adapter
 
 
     fun setItems(itemsList: List<ShopItem>){
-        shopItemsList = itemsList
-        notifyDataSetChanged()
+        CoroutineScope(IO).launch {
+            shopItemsList = itemsList
+            withContext(Main) {
+                notifyDataSetChanged()
+            }
+        }
     }
 
 }

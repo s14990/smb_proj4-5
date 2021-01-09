@@ -1,8 +1,9 @@
 package com.example.s14990_smb_proj1
 
 import android.content.*
+import android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -10,16 +11,22 @@ import android.text.Spanned
 import android.text.TextWatcher
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.IntentCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.s14990_smb_proj1.databinding.ActivityMainBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+
 
 private lateinit var sp: SharedPreferences
 private lateinit var binding: ActivityMainBinding
 private lateinit var UID: String
-private lateinit var UserName: String
 
 class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -32,12 +39,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         UID = intent.getStringExtra("UID").toString()
-        UserName = intent.getStringExtra("UserName").toString()
 
-        binding.defaultCount.filters= arrayOf<InputFilter> (object: InputFilter{
+        binding.defaultCount.filters= arrayOf<InputFilter>(object : InputFilter {
             override fun filter(source: CharSequence, start: Int, end: Int, dest: Spanned?, dstart: Int, dend: Int): CharSequence? {
-                val new_value=dest.toString().substring(0, dstart)+source.subSequence(start, end).toString()
-                if(new_value.isEmpty())
+                val new_value = dest.toString().substring(0, dstart) + source.subSequence(start, end).toString()
+                if (new_value.isEmpty())
                     return "1"
                 else return null
             }
@@ -60,7 +66,7 @@ class MainActivity : AppCompatActivity() {
 
         val viewModel = ShopItemViewModel(application, UID)
         val adapter = ItemsAdapter(viewModel)
-        viewModel.items.observe(this, Observer{ items ->
+        viewModel.items.observe(this, Observer { items ->
             items.let {
                 adapter.setItems(it)
             }
@@ -76,18 +82,23 @@ class MainActivity : AppCompatActivity() {
             val priceString=binding.itemPriceField.text.toString()
             val countString=binding.itemCountField.text.toString()
             if (name.isEmpty() || priceString.isEmpty() || countString.isEmpty()){
-                Toast.makeText(this, "Nazwa,cena i ilość nie mogą być puste",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Nazwa,cena i ilość nie mogą być puste", Toast.LENGTH_SHORT).show()
             }
             else {
-                viewModel.insert(name,priceString.toFloat(),countString.toInt(),binding.itemCheckedField.isChecked)
+                CoroutineScope(IO).launch {
+                    viewModel.insert(name, priceString.toFloat(), countString.toInt(), binding.itemCheckedField.isChecked)
+                }
                 binding.itemNameField.setText("")
                 binding.itemPriceField.setText("")
                 binding.itemCountField.setText(binding.defaultCount.text.toString())
             }
         }
         binding.SwitchButton.setOnClickListener {
-            val Main2Intent = Intent(this,MainActivity2::class.java)
+            val Main2Intent = Intent(this, MainActivity2::class.java)
+            Main2Intent.putExtra("UID", UID)
+            Main2Intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(Main2Intent)
+            finish()
         }
 
     }
