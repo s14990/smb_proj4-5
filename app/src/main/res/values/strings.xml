@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">s14990_smb_Proj1</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="maps_api_key">AIzaSyDD9nqBZxy1XXsLR0BS5WoME_Xim2RYKJU</string>
 </resources>
