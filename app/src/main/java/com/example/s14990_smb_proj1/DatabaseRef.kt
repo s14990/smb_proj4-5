@@ -56,6 +56,7 @@ object DatabaseRef {
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 runBlocking {
                     val item = snapshot.getValue(Shop::class.java)
+                    item?.Name?.let { GeoFactory.removeMarker(it) }
                     list.remove(item)
                 }
             }

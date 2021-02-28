@@ -12,42 +12,45 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.android.gms.location.GeofencingEvent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class GeoExitReceiver : BroadcastReceiver() {
 
     private var id=200
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context, intent: Intent) {
-        id+=1
+        CoroutineScope(Dispatchers.IO).launch {
+            id += 1
+            val event = GeofencingEvent.fromIntent(intent)
+            for (geo in event.triggeringGeofences) {
+                val geo_id = geo.requestId.split("____").last()
+                Log.i("location", "Exit received ${geo_id}")
+                val Shop = DatabaseRef.getById(geo_id)
 
-        val event = GeofencingEvent.fromIntent(intent)
-        for(geo in event.triggeringGeofences){
-            val geo_id=geo.requestId.split("____").last()
-            Log.i("location","Exit received ${geo_id}")
-            val Shop=DatabaseRef.getById(geo_id)
-
-            val context=GeoFactory.Get_context()
-            createChannel(context)
-
-            if(Shop !=null){
-                val n= NotificationCompat.Builder(context, "ShopExitId")
-                        .setSmallIcon(R.mipmap.ic_launcher_round)
-                        .setContentTitle("Farewell from shop ${Shop.Name}")
-                        .setContentText("Here you can buy ${Shop.Desc}")
-                        .setAutoCancel(true)
-                        .build()
-                NotificationManagerCompat.from(context).notify(id,n)
+                val context = GeoFactory.Get_context()
+                createChannel(context)
+                withContext(Dispatchers.Main) {
+                    if (Shop != null) {
+                        val n = NotificationCompat.Builder(context, "ShopExitId")
+                                .setSmallIcon(R.mipmap.ic_launcher_round)
+                                .setContentTitle("Farewell from shop ${Shop.Name}")
+                                .setContentText("Here you can buy ${Shop.Desc}")
+                                .setAutoCancel(true)
+                                .build()
+                        NotificationManagerCompat.from(context).notify(id, n)
+                    } else {
+                        val n = NotificationCompat.Builder(context, "ShopExitId")
+                                .setSmallIcon(R.mipmap.ic_launcher_round)
+                                .setContentTitle("Farewell from New Shop")
+                                .setAutoCancel(true)
+                                .build()
+                        NotificationManagerCompat.from(context).notify(id, n)
+                    }
+                }
             }
-            else{
-                val n= NotificationCompat.Builder(context, "ShopExitId")
-                        .setSmallIcon(R.mipmap.ic_launcher_round)
-                        .setContentTitle("Farewell from New Shop")
-                        .setAutoCancel(true)
-                        .build()
-                NotificationManagerCompat.from(context).notify(id,n)
-            }
-
-
         }
     }
 

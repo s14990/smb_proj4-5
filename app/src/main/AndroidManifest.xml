@@ -29,10 +29,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.S14990_smb_Proj1">
+        <receiver android:name=".FinalWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="@strings/action1" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/final_widget_info" />
+        </receiver>
         <receiver
             android:name=".GeoExitReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
 
         <activity android:name=".ShopListActivity" />
 
@@ -64,9 +74,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity2" />
-        <activity android:name=".LoginActivityActivity" />
-        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

@@ -134,27 +134,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
     fun clear_all_intents(){
-        for(idd in 0..1000){
-            val geoPendingIntent = PendingIntent.getBroadcast(
-                    this,
-                    idd,
-                    Intent(this, GeoReceiver::class.java),
-                    PendingIntent.FLAG_UPDATE_CURRENT
-            )
-            geoClient.removeGeofences(geoPendingIntent).addOnSuccessListener {
-                Log.i("GEOFENCE", "Removed")
-            }.addOnFailureListener {
-                Log.i("GEOFENCE", " REmove FAILED ${it.message}")
-            }
-        }
-        for(idd in 0..1000){
-            val geoPendingIntent = PendingIntent.getBroadcast(
-                    this,
-                    idd,
-                    Intent(this, GeoExitReceiver::class.java),
-                    PendingIntent.FLAG_UPDATE_CURRENT
-            )
-            geoClient.removeGeofences(geoPendingIntent).addOnSuccessListener {
+        for(intent in GeoFactory.Intentslist){
+            geoClient.removeGeofences(intent).addOnSuccessListener {
                 Log.i("GEOFENCE", "Removed")
             }.addOnFailureListener {
                 Log.i("GEOFENCE", " REmove FAILED ${it.message}")

@@ -2,4 +2,8 @@
     <string name="app_name">s14990_smb_Proj1</string>
     <string name="title_activity_maps">Map</string>
     <string name="maps_api_key">AIzaSyDD9nqBZxy1XXsLR0BS5WoME_Xim2RYKJU</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="open_web_page">com.example.s14990_smb_proj1.action1</string>
+    <string name="action1">com.example.s14990.action1</string>
 </resources>
